@@ -8,7 +8,7 @@
 function getByClass(){
     var oParent = arguments.length == 1?document:arguments[0];
     var sClass = arguments.length == 1?arguments[0]:arguments[1];
-    if(!document.getElementsByClassName){
+    if(document.getElementsByClassName){
         return oParent.getElementsByClassName(sClass);
     }else{
         var aTmp = oParent.getElementsByTagName('*');
