@@ -3,12 +3,12 @@
  * author:JM
  * Released on: August 11, 2016
  * @param {Object} [arguments[0]=document] - 上级DOM元素
- * @param {String} arguments[1] - 想要获取的ID
+ * @param {String} arguments[1] - 想要获取DOM元素的class
  * */
 function getByClass(){
     var oParent = arguments.length == 1?document:arguments[0];
     var sClass = arguments.length == 1?arguments[0]:arguments[1];
-    if(document.getElementsByClassName){
+    if(!document.getElementsByClassName){
         return oParent.getElementsByClassName(sClass);
     }else{
         var aTmp = oParent.getElementsByTagName('*');
@@ -17,8 +17,7 @@ function getByClass(){
         for(var i=0;i<aTmp.length;i++){
             arr = aTmp[i].className.split(' ');
             for (var j=0;j<arr.length;j++){
-                if(arr[j] == sClass)
-                {
+                if(arr[j] == sClass){
                     aRes.push(aTmp[i]);
                 }
             }
