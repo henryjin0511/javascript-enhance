@@ -5,7 +5,7 @@
  * @param {Object} [arguments[0]=document] - 上级DOM元素
  * @param {String} arguments[1] - 想要获取的ID
  * */
-function getClassName(){
+function getByClass(){
     var oParent = arguments.length == 1?document:arguments[0];
     var sClass = arguments.length == 1?arguments[0]:arguments[1];
     if(document.getElementsByClassName){
