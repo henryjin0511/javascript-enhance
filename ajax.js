@@ -1,69 +1,79 @@
 /**
- * ajax
+ * 原生ajax封装
  * author:JM
  * Released on: August 11, 2016
+ * @param {String} [param.type="get"]-post或get不区分大小写
+ * @param {String} param.url - 请求地址
+ * @param {Object} param.data - {a:1,b:2}
+ * @param {Boolean} [param.async=true] true为异步 false为同步
+ * @param {Function} param.success 成功函数返回responseText
+ * @param {Function} param.error 失败返回xhr对象
  */
-function ajax(param){
-    var xhr;
-    if(typeof XMLHttpRequest != 'undefined'){
-        xhr =  new XMLHttpRequest();
-    }else if(typeof ActiveXObject != 'undefined'){
-        var version = [
-            "MSXML2.XMLHttp.6.0",
-            "MSXML2.XMLHttp.3.0",
-            "MSXML2.XMLHttp"
-        ];
-        for (var i=0;i< version.length;i++){
-            try{
-                xhr = new ActiveXObject(version[i]);
-            }catch (e){
-                //跳过
+(function (window,undefined) {
+    var ajax = function (param){
+        var xhr;
+        if(typeof XMLHttpRequest != 'undefined'){
+            xhr =  new XMLHttpRequest();
+        }else if(typeof ActiveXObject != 'undefined'){
+            var version = [
+                "MSXML2.XMLHttp.6.0",
+                "MSXML2.XMLHttp.3.0",
+                "MSXML2.XMLHttp"
+            ];
+            for (var i=0;i< version.length;i++){
+                try{
+                    xhr = new ActiveXObject(version[i]);
+                }catch (e){
+                    //跳过
+                }
             }
+        }else{
+            throw new Error("Your browser don't support SHR object !");
         }
-    }else{
-        throw new Error("Your browser don't support SHR object !");
-    }
-    var url = param.url;
-    var data = (function(data){
-        var arr = [];
-        for(var i in data){
-            arr.push(encodeURIComponent(i) + "=" + encodeURIComponent(data[i]));
+        var url = param.url;
+        var data = (function(data){
+            var arr = [];
+            for(var i in data){
+                arr.push(encodeURIComponent(i) + "=" + encodeURIComponent(data[i]));
+            }
+            return arr.join("&");
+        })(param.data);
+        var type = param.type || 'GET';
+        if(type.toUpperCase() === 'GET'){
+            url += url.indexOf("?") == "-1"? "?"+ data:"&"+data;
         }
-        return arr.join("&");
-    })(param.data);
-    var type = param.type || 'GET';
-    if(type.toUpperCase() === 'GET'){
-        url += url.indexOf("?") == "-1"? "?"+ data:"&"+data;
-    }
-    var async = typeof param.async === 'undefined'? true : param.async;
-    //异步
-    if(async === true){
-        xhr.onreadystatechange = function(){
-            if(xhr.readyState == 4){
-                if(xhr.status == 200){
-                    param.success(xhr.responseText);
-                }else{
-                    param.error(xhr);
+        var async = typeof param.async === 'undefined'? true : param.async;
+        //异步
+        if(async === true){
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState == 4){
+                    if(xhr.status == 200){
+                        param.success(xhr.responseText);
+                    }else{
+                        param.error(xhr);
+                    }
                 }
             }
         }
-    }
-    xhr.open(type,url,async);
-    if(type.toUpperCase() === 'POST'){
-        xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
-        xhr.send(data);
-    }else{
-        xhr.send(null);
-    }
-    //同步
-    if(async === false) {
-        if (xhr.status == 200) {
-            param.success(xhr.responseText);
-        } else {
-            param.error(xhr);
+        xhr.open(type,url,async);
+        if(type.toUpperCase() === 'POST'){
+            xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+            xhr.send(data);
+        }else{
+            xhr.send(null);
         }
-    }
-}
+        //同步
+        if(async === false) {
+            if (xhr.status == 200) {
+                param.success(xhr.responseText);
+            } else {
+                param.error(xhr);
+            }
+        }
+    };
+    window.ajax = ajax;
+})(window);
+
 // readyState有五种状态：
 // 0 (未初始化)： (XMLHttpRequest)对象已经创建，但还没有调用open()方法；
 // 1 (载入)：已经调用open() 方法，但尚未发送请求；
