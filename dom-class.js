@@ -25,27 +25,88 @@ function getByClass(){
         return aRes;
     }
 }
-function addClass(obj, cls){
-    var obj_class = obj.className;//获取 class 内容.
-    var blank = (obj_class != '') ? ' ' : '';//判断获取到的 class 是否为空, 如果不为空在前面加个'空格'.
-    var added = obj_class + blank + cls;//组合原来的 class 和需要添加的 class.
-    obj.className = added;//替换原来的 class.
+/**
+ * DOM元素增加class
+ * author:JM
+ * Released on: August 12, 2016
+ * @param {Object} obj - 想要操作的DOM元素
+ * @param {String} class1, class2, ... - 想要添加到DOM元素的class
+ * info:并没有添加去重功能，考虑到class去重影响性能且浏览器解析时并无太大影响
+ * */
+function addClass(obj,class1){
+    var aClass = [];
+    for(var i=1;i<arguments.length;i++){
+        aClass.push(arguments[i]);
+    }
+    if("classList" in document.documentElement && !(!!window.ActiveXObject || "ActiveXObject" in window)){
+        obj.classList.add.apply(obj.classList,aClass);
+    }else{
+        var sClass = aClass.join(' ');
+        obj.className += (obj.className != '')?' '+sClass:sClass;
+    }
 }
-function removeClass(obj, cls){
-    var obj_class = ' '+obj.className+' ';//获取 class 内容, 并在首尾各加一个空格. ex) 'abc        bcd' -> ' abc        bcd '
-    obj_class = obj_class.replace(/(\s+)/gi, ' '); //将多余的空字符替换成一个空格. ex) ' abc        bcd ' -> ' abc bcd '
-    var removed = obj_class.replace(' '+cls+' ', ' ');//在原来的 class 替换掉首尾加了空格的 class. ex) ' abc bcd ' -> 'bcd '
-    removed = removed.replace(/(^\s+)|(\s+$)/g, '');//去掉首尾空格. ex) 'bcd ' -> 'bcd'
-    obj.className = removed;//替换原来的 class.
+/**
+ * DOM元素删除class
+ * author:JM
+ * Released on: August 12, 2016
+ * @param {Object} obj - 想要操作的DOM元素
+ * @param {String} class1, class2, ... - 想要删除DOM元素的class
+ * */
+function removeClass(obj,class1){
+    var aClass = [];
+    for(var i=1;i<arguments.length;i++){
+        aClass.push(arguments[i]);
+    }
+    if("classList" in document.documentElement && !(!!window.ActiveXObject || "ActiveXObject" in window)){
+        obj.classList.remove.apply(obj.classList,aClass);
+    }else{
+        var sObjClass = ' '+obj.className+' ';
+
+        for(var j=0;j<aClass.length;j++){
+            var reg = new RegExp(' '+aClass[j]+' ','g');
+            sObjClass = sObjClass.replace(reg,' ');
+        }
+        sObjClass = sObjClass.replace(/(\s+)/gi, ' ');
+        sObjClass = sObjClass.replace(/(^\s+)|(\s+$)/g, '');
+        obj.className = sObjClass;
+    }
 }
-function hasClass(obj, cls){
-    var obj_class = obj.className;//获取 class 内容.
-    var obj_class_lst = obj_class.split(/\s+/);//通过split空字符将cls转换成数组.
-    var x = 0;
-    for(x in obj_class_lst) {
-        if(obj_class_lst[x] == cls) {//循环数组, 判断是否包含cls
-            return true;
+/**
+ * 判断DOM元素是否存在某个class
+ * author:JM
+ * Released on: August 12, 2016
+ * @param {Object} obj - 想要操作的DOM元素
+ * @param {String} sclass - 想要删除DOM元素的class
+ * */
+function hasClass(obj, sclass){
+    if("classList" in document.documentElement){
+        return obj.classList.contains(sclass);
+    }else{
+        var sObjClass = obj.className;
+        var aObjClass = sObjClass.split(/\s+/);
+        for(var i in aObjClass) {
+            if(aObjClass[i] == sclass) {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+/**
+ * 在元素中切换类名
+ * author:JM
+ * Released on: August 12, 2016
+ * @param {Object} obj - 想要操作的DOM元素
+ * @param {String} sclass - 想要删除DOM元素的class
+ * */
+function toggleClass(obj,sclass){
+    if("classList" in document.documentElement){
+        return obj.classList.toggle(sclass);
+    }else{
+        if(hasClass(obj,sclass)){
+            removeClass(obj,sclass);
+        }else{
+            addClass(obj,sclass);
         }
     }
-    return false;
 }
