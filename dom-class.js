@@ -1,3 +1,4 @@
+"use strict";
 /**
  * 通过calss获取DOM元素
  * author:JM

@@ -1,3 +1,4 @@
+"use strict";
 /**
  * 原生ajax封装
  * author:JM
