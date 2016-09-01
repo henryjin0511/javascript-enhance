@@ -21,7 +21,7 @@ function Tab(config){
 	this.root = config.root || document;
 	this.curClass = config.curClass || 'active';
 	this.oTriggers = typeof config.oTriggers == 'string'?getByClass(this.root,config.oTriggers) : config.oTriggers;
-	this.oTargets = config.oTargets;
+	this.oTargets = typeof config.oTargets == 'string'?getByClass(this.root,config.oTargets) : config.oTargets;
 	this.handler = config.handler;
     this.curIndex = typeof config.curIndex == 'undefined'?0:config.curIndex;
     this.timer = null;
